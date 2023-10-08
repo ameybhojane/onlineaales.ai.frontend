@@ -79,7 +79,7 @@ function Home() {
                                         name="Options"
                                         type="textarea"
                                         value={fieldValues.options}
-                                        placeHolder="Please enter the DropDown Option seprated by commas"
+                                        placeHolder={`Please enter the ${(fieldValues.type === "select") ? "Drop Down" : "Radio"} Option seprated by commas`}
                                         onChange={(e) => setFieldValues({ ...fieldValues, options: e.target.value })}
                                     />
                                 </FormGroup>

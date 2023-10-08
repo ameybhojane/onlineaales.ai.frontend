@@ -16,7 +16,7 @@ function FormGenrator(props) {
     const setFields = props.setFields;
     let initalFormValues = {}
     for (let i = 0; i < fields.length; i++) {
-        initalFormValues = { ...initalFormValues, [fields[i].id]: "" }
+        initalFormValues = { ...initalFormValues, [fields[i].label]: "" }
     }
     const [formValues, setFormValues] = useState(initalFormValues)
     const [isOpen, setIsOpen] = useState(false)
@@ -29,26 +29,36 @@ function FormGenrator(props) {
                             <Col md={6}>
                                 <FormGroup>
                                     <p>{field.label}</p>
-                                    {field.options.map((option, i) => (<><Input
-                                        id={option + i}
-                                        name={field.id}
-                                        type={"radio"}
-                                        onChange={(e) => {
+                                    {field.options.map((option, j) => (
+                                        <div key={j}>
+                                            <Input
+                                                id={option + j}
+                                                name={field.label} // Use the field label as the name
+                                                type="radio"
+                                                value={option}
+                                                onChange={(e) => {
+                                                    const fieldName = e.target.name;
+                                                    const selectedValue = e.target.value;
+                                                    setFormValues({ ...formValues, [fieldName]: selectedValue });
+                                                }}
+                                                checked={formValues[field.label] === option}
+                                            />
+                                            <Label for={option + j}>{option}</Label>
+                                        </div>
+                                    ))}
 
-                                            setFormValues({ ...formValues, [field?.id]: option })
-                                        }}
-                                    />
-                                        <Label for={option + i}>{option}</Label></>))}
                                 </FormGroup>
                             </Col>
                             <Col md={3} className="d-flex align-items-center">
                                 <FormGroup>
-                                    {/* <Button type="submit" onClick={(e) => {
+                                    <Button type="submit" onClick={(e) => {
                                         e.preventDefault()
-                                        const newFields = [...fields.splice(0, i), ...fields.splice(i, field.length)];
-
+                                        const newFields = fields.filter((f, idx) => i !== idx);
+                                        let newFormValues = Object.assign({}, formValues);;
+                                        delete newFormValues[field?.label];
+                                        setFormValues(newFormValues)
                                         setFields(newFields)
-                                    }}>Remove</Button> */}
+                                    }}>Remove</Button>
                                 </FormGroup>
                             </Col>
                         </Row>)
@@ -71,24 +81,29 @@ function FormGenrator(props) {
                                         >{option}</option>
                                         </>))}
                                     </select> */}
+                                    <Label for={field?.id}>{field?.label}</Label>
                                     <Select
+                                        id={field?.id}
                                         style={{ width: 200 }}
                                         options={formattedOptions}
-                                        value={formValues[field.id]}
+                                        value={formValues[field.label]}
                                         onChange={(e) => {
-                                            setFormValues({ ...formValues, [field?.id]: e })
+                                            setFormValues({ ...formValues, [field?.label]: e })
                                         }}
-                                    ></Select>
+                                    >{field?.label}</Select>
                                 </FormGroup>
                             </Col>
                             <Col md={3} className="d-flex align-items-center">
-                                {/* <FormGroup>
+                                <FormGroup>
                                     <Button type="submit" onClick={(e) => {
                                         e.preventDefault()
                                         const newFields = fields.filter((f, idx) => i !== idx);
+                                        let newFormValues = Object.assign({}, formValues);
+                                        delete newFormValues[field?.label];
+                                        setFormValues(newFormValues)
                                         setFields(newFields)
                                     }}>Remove</Button>
-                                </FormGroup> */}
+                                </FormGroup>
                             </Col>
                         </Row>)
                     default:
@@ -100,24 +115,28 @@ function FormGenrator(props) {
                                         id={field?.id}
                                         name={field?.label}
                                         type={field?.type}
-                                        value={formValues[field?.id]}
+                                        value={formValues[field?.label]}
                                         onChange={(e) => {
                                             if (field?.type === "checkbox")
-                                                setFormValues({ ...formValues, [field?.id]: e.target.checked })
+                                                setFormValues({ ...formValues, [field?.label]: e.target.checked })
                                             else
-                                                setFormValues({ ...formValues, [field?.id]: e.target.value })
+                                                setFormValues({ ...formValues, [field?.label]: e.target.value })
                                         }}
                                     />
                                 </FormGroup>
                             </Col>
                             <Col md={3} className="d-flex align-items-center">
                                 <FormGroup>
-                                    {/* <Button type="submit" onClick={(e) => {
+                                    <Button type="submit" onClick={(e) => {
                                         e.preventDefault()
+                                        debugger
                                         const newFields = fields.filter((f, idx) => i !== idx);
+                                        let newFormValues = Object.assign({}, formValues);
+                                        delete newFormValues[field?.label];
+                                        setFormValues(newFormValues)
                                         console.log({ newFields })
                                         setFields(newFields)
-                                    }}>Remove</Button> */}
+                                    }}>Remove</Button>
                                 </FormGroup>
                             </Col>
 
